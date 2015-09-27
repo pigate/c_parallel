@@ -12,7 +12,8 @@ int main(int argc, char **argv)
 
   //parallelize this chunk of code 
   //thread_id and priv_nloops become each thread's private variables 
-  #pragma omp parallel private(thread_id, priv_nloops)
+  //reduce directive. synchronizes access to glob_nloops 
+  #pragma omp parallel private(thread_id, priv_nloops) reduction(+:glob_nloops)
   {
     priv_nloops = 0;
     thread_id = omp_get_thread_num();
@@ -23,16 +24,14 @@ int main(int argc, char **argv)
     {
       ++priv_nloops; 
     }
-    printf("Thread %d performed %d iterations of the loop.\n",
-	thread_id, priv_nloops);   
+    glob_nloops += priv_nloops;
+    
     //"critical" code section for updating a global variable
     //only one thread can enter at a time
-
     #pragma omp critical
     {
       printf("Thread %d is adding its iterations (%d) to sum (%d), ",
       	thread_id, priv_nloops, glob_nloops);
-      glob_nloops += priv_nloops;
       printf("total loops is now %d.\n", glob_nloops);
     } 
   } 
