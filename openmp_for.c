@@ -1,6 +1,15 @@
 // gcc -fopenmp -o go openmp_for.c
 // ./go
 
+/*
+src: https://en.wikipedia.org/wiki/OpenMP#OpenMP_clauses
+other omp directives:
+barrier: each thread waits until all other threads reach this point in code before continuing
+nowait: threads will not wait until everybody finished
+schedule(type, chunk): specifies how tasks are spawned out to threads in a for loop. 3 types.
+if: allows to parallelize only if certain condition is met
+*/
+
 #include <stdio.h>
 #include <omp.h>
 
